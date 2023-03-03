@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Boşluk Düzeltme</title>
+    <style>
+        body {
+          font-family: Arial, sans-serif;
+          font-size: 16px;
+          margin: 0;
+          padding: 0;
+        }
+        .container {
+          display: table;
+          width: 100%;
+          max-height: 400px;
+          table-layout: fixed;
+        }
+        .left {
+          display: table-cell;
+          width: 50%;
+          vertical-align: top;
+          padding: 20px;
+          position: relative;
+          text-align: justify;
+        }
+        .right {
+          display: table-cell;
+          width: 50%;
+          vertical-align: top;
+          padding: 20px;
+        }
+        #metin-alani {
+          width: 100%;
+          height: calc(100% - 80px);
+          margin-bottom: 10px;
+          box-sizing: border-box;
+          padding: 10px;
+        }
+        button {
+          margin-bottom: 10px;
+        }
+        textarea {
+          height: 200px;
+          resize: vertical;
+          margin-bottom: 10px;
+          padding: 5px;
+          font-size: 16px;
+          width: 100%;
+          box-sizing: border-box;
+        }
+        ul {
+            list-style-type: none;
+  margin: 0;
+  padding: 0;
+  border: 1px solid #ccc;
+        }
+        li {
+            display: block;
+  padding: 3px 5px;
+}
+
+li input[type="checkbox"] {
+  margin-left: 10px;
+}
+       
+        #duzeltilmis-metin-alani-container {
+          position: absolute;
+          bottom: 0;
+          left: 0;
+          width: 90%;
+          margin-bottom: 10px;
+          margin-left: 15px;
+        }
+        #duzeltilmis-metin-alani {
+          width: 100%;
+          height: calc(100% - 80px);
+          box-sizing: border-box;
+          padding: 10px;
+          resize: vertical;
+          font-size: 16px;
+        }
+        /* Yeni eklenen stil */
+        .checkbox {
+            margin: 0 5px;
+  vertical-align: middle;
+  transform: scale(1.5)
+        }
+      </style>
+  </head>
+  <body>
+    <div class="container">
+      <div class="left">
+        <h1>Boşlukları Düzelt</h1>
+        <textarea id="metin-alani" spellcheck="false"></textarea>
+        <button id="bosluklari-sil">Düzelt</button>
+        <div id="duzeltilmis-metin-alani-container">
+          <textarea id="duzeltilmis-metin-alani"></textarea>
+          <button id="kopyala-metin">Metni Kopyala</button>
+        </div>
+        <script>
+          const kopyalaButon = document.getElementById("kopyala-metin");
+          const duzeltilmisMetinAlani = document.getElementById(
+            "duzeltilmis-metin-alani"
+          );
+
+          document
+            .getElementById("bosluklari-sil")
+            .addEventListener("click", function () {
+              let metinAlani = document.getElementById("metin-alani");
+              let metin = metinAlani.value;
+              let duzenlenmis = metin.replace(/\s+/g, " ");
+              metinAlani.value = duzenlenmis;
+
+              duzeltilmisMetinAlani.value = duzenlenmis;
+            });
+
+          kopyalaButon.addEventListener("click", function () {
+            duzeltilmisMetinAlani.select();
+            document.execCommand("copy");
+            alert("Metin kopyalandı!");
+          });
+        </script>
+      </div>
+      <div class="right">
+        <h1>Liste Oluştur</h1>
+        <textarea id="cumle" spellcheck="false"></textarea>
+        <button onclick="listeOlustur()">Liste Oluştur</button>
+        <ul id="liste"></ul>
+        <h2>Seçilenler</h2>
+        <ul id="secilenler"></ul>
+        <script>
+          let liste = document.getElementById("liste");
+          let cumleInput = document.getElementById("cumle");
+          let secilenler = [];
+
+          function listeOlustur() {
+            let cumle = cumleInput.value.trim();
+            if (cumle.length > 0) {
+              let kelimeler = cumle.split(/\s+/);
+              let listeHTML = "";
+              for (let i = 0; i < kelimeler.length; i++) {
+                listeHTML +=
+                  "<li><span>" +
+                  kelimeler[i] +
+                  '</span><input class="checkbox" type="checkbox" onchange="secimYap(this, ' +
+                  i +
+                  ')"></li>';
+              }
+              liste.innerHTML = listeHTML;
+            }
+          }
+
+          function secimYap(checkbox, index) {
+            if (checkbox.checked) {
+              secilenler.push(index);
+            } else {
+              let idx = secilenler.indexOf(index);
+              if (idx !== -1) {
+                secilenler.splice(idx, 1);
+              }
+            }
+            let secilenlerHTML = "";
+            for (let i = 0; i < secilenler.length; i++) {
+              let index = secilenler[i];
+              secilenlerHTML +=
+                "<li>" +
+                document.querySelectorAll("#liste li span")[index].textContent +
+                "</li>";
+            }
+            document.getElementById("secilenler").innerHTML = secilenlerHTML;
+          }
+        </script>
+      </div>
+    </div>
+  </body>
+</html>
